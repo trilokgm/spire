@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/golang/protobuf/ptypes/wrappers"
 	"github.com/sirupsen/logrus"
 	"github.com/spiffe/spire/pkg/common/bundleutil"
 	"github.com/spiffe/spire/pkg/common/idutil"
@@ -577,6 +578,36 @@ func (h *Handler) getCertFromCtx(ctx context.Context) (certificate *x509.Certifi
 	return tlsInfo.State.PeerCertificates[0], nil
 }
 
+func (h *Handler) isDelegated(ctx context.Context, callerID, spiffeID string) bool {
+
+	ds := h.c.Catalog.DataStores()[0]
+	response, err := ds.ListRegistrationEntries(ctx, &datastore.ListRegistrationEntriesRequest{
+		BySpiffeId: &wrappers.StringValue{
+			Value: callerID,
+		},
+	})
+
+	if err != nil {
+		return false
+	}
+
+	regEntriesMap := make(map[string]*common.RegistrationEntry)
+	for _, entry := range response.Entries {
+		regEntriesMap[entry.SpiffeId] = entry
+	}
+
+	entry, ok := regEntriesMap[callerID]
+	if !ok {
+		return false
+	}
+
+	delegatedURIString := fmt.Sprintf("spiffe://%s", entry.Delegated)
+	if delegatedURIString == spiffeID {
+		return true
+	}
+	return false
+}
+
 func (h *Handler) signCSRs(ctx context.Context,
 	peerCert *x509.Certificate, csrs [][]byte, regEntries []*common.RegistrationEntry) (
 	svids map[string]*node.X509SVID, err error) {
@@ -627,12 +658,21 @@ func (h *Handler) signCSRs(ctx context.Context,
 			}
 
 		} else {
-			h.c.Log.Debugf("Signing SVID for %v on request by %v", spiffeID, callerID)
-			svid, err := h.buildSVID(ctx, spiffeID, regEntriesMap, csr)
-			if err != nil {
-				return nil, err
+			if (spiffeID != callerID) && (h.isDelegated(ctx, callerID, spiffeID)) {
+				h.c.Log.Debugf("Signing delegated SVID for %v on request by %v", spiffeID, callerID)
+				svid, err := h.buildCASVID(ctx, csr)
+				if err != nil {
+					return nil, err
+				}
+				svids[spiffeID] = svid
+			} else {
+				h.c.Log.Debugf("Signing SVID for %v on request by %v", spiffeID, callerID)
+				svid, err := h.buildSVID(ctx, spiffeID, regEntriesMap, csr)
+				if err != nil {
+					return nil, err
+				}
+				svids[spiffeID] = svid
 			}
-			svids[spiffeID] = svid
 		}
 	}
 
@@ -665,6 +705,15 @@ func (h *Handler) buildBaseSVID(ctx context.Context, csr []byte) (*node.X509SVID
 	}
 
 	return makeX509SVID(svid), svid[0], nil
+}
+
+func (h *Handler) buildCASVID(ctx context.Context, csr []byte) (*node.X509SVID, error) {
+	svid, err := h.c.ServerCA.SignX509CASVID(ctx, csr, 0)
+	if err != nil {
+		return nil, err
+	}
+
+	return makeX509SVID(svid), nil
 }
 
 func (h *Handler) getBundlesForEntries(ctx context.Context, regEntries []*common.RegistrationEntry) (map[string]*common.Bundle, error) {

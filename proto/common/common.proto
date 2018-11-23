@@ -47,6 +47,8 @@ message RegistrationEntry {
     repeated string federates_with = 5;
     /** Entry ID */
     string entry_id = 6;
+    /** string delegated */
+    string delegated = 7;
 }
 
 /** A list of registration entries. */

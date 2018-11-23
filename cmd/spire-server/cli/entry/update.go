@@ -30,9 +30,10 @@ type UpdateConfig struct {
 	// ex. "unix:uid:1000" or "spiffe_id:spiffe://example.org/foo"
 	Selectors StringsFlag
 
-	ParentID string
-	SpiffeID string
-	Ttl      int
+	ParentID  string
+	SpiffeID  string
+	Delegated string
+	Ttl       int
 
 	// List of SPIFFE IDs of trust domains the registration entry is federated with
 	FederatesWith StringsFlag
@@ -143,10 +144,11 @@ func (c UpdateCLI) Run(args []string) int {
 // parseConfig builds a registration entry from the given config
 func (c UpdateCLI) parseConfig(config *UpdateConfig) ([]*common.RegistrationEntry, error) {
 	e := &common.RegistrationEntry{
-		EntryId:  config.EntryID,
-		ParentId: config.ParentID,
-		SpiffeId: config.SpiffeID,
-		Ttl:      int32(config.Ttl),
+		EntryId:   config.EntryID,
+		ParentId:  config.ParentID,
+		SpiffeId:  config.SpiffeID,
+		Ttl:       int32(config.Ttl),
+		Delegated: config.Delegated,
 	}
 
 	selectors := []*common.Selector{}
