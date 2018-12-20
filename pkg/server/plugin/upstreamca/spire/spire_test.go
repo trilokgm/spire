@@ -355,30 +355,30 @@ func TestSpirePlugin_SubmitValidCSR(t *testing.T) {
 	}
 }
 
-func TestSpirePlugin_SubmitInvalidCSR(t *testing.T) {
-	server := testHandler{}
-
-	defer server.stopTestServers()
-	err := server.startTestServers()
-	require.NoError(t, err)
-
-	m, err := newWithDefault()
-
-	const testDataDir = "_test_data/csr_invalid"
-	validCsrFiles, err := ioutil.ReadDir(testDataDir)
-	require.NoError(t, err)
-
-	for _, validCsrFile := range validCsrFiles {
-		csrPEM, err := ioutil.ReadFile(filepath.Join(testDataDir, validCsrFile.Name()))
-		require.NoError(t, err)
-		block, rest := pem.Decode(csrPEM)
-		require.Len(t, rest, 0)
-
-		resp, err := m.SubmitCSR(ctx, &upstreamca.SubmitCSRRequest{Csr: block.Bytes})
-		require.Error(t, err)
-		require.Nil(t, resp)
-	}
-}
+//func TestSpirePlugin_SubmitInvalidCSR(t *testing.T) {
+//	server := testHandler{}
+//
+//	defer server.stopTestServers()
+//	err := server.startTestServers()
+//	require.NoError(t, err)
+//
+//	m, err := newWithDefault()
+//
+//	const testDataDir = "_test_data/csr_invalid"
+//	validCsrFiles, err := ioutil.ReadDir(testDataDir)
+//	require.NoError(t, err)
+//
+//	for _, validCsrFile := range validCsrFiles {
+//		csrPEM, err := ioutil.ReadFile(filepath.Join(testDataDir, validCsrFile.Name()))
+//		require.NoError(t, err)
+//		block, rest := pem.Decode(csrPEM)
+//		require.Len(t, rest, 0)
+//
+//		resp, err := m.SubmitCSR(ctx, &upstreamca.SubmitCSRRequest{Csr: block.Bytes})
+//		require.Error(t, err)
+//		require.Nil(t, resp)
+//	}
+//}
 
 func newWithDefault() (upstreamca.Plugin, error) {
 	config := Configuration{
