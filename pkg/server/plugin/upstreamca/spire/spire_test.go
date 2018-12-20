@@ -32,7 +32,7 @@ const (
 	"ttl":"1h",
 	"server_address":"_test_data/keys/private_key.pem",
 	"server_port":"_test_data/keys/cert.pem",
-	"server_agent_address":"8090"
+	"server_agent_address":"8000"
 }`
 	trustDomain           = "example.com"
 	key_file_path         = "_test_data/keys/private_key.pem"
@@ -57,11 +57,19 @@ type testHandler struct {
 	napiServer *handler
 }
 
-func (t *testHandler) startTestServers() {
+func (t *testHandler) startTestServers() error {
 	t.wapiServer = &whandler{}
 	t.napiServer = &handler{}
-	t.napiServer.startNodeAPITestServer()
-	t.wapiServer.startWAPITestServer()
+
+	err := t.napiServer.startNodeAPITestServer()
+	if err != nil  {
+		return err
+	}
+	err = t.wapiServer.startWAPITestServer()
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (t *testHandler) stopTestServers() {
@@ -79,7 +87,7 @@ func (w *whandler) startWAPITestServer() error {
 	l, err := net.Listen("unix", "./test.sock")
 	if err != nil {
 		fmt.Println("error" + err.Error())
-		return nil
+		return err
 	}
 
 	go func() { w.server.Serve(l) }()
@@ -170,12 +178,10 @@ func (h *handler) startNodeAPITestServer() error {
 // runGRPCServer will start the server and block until it exits or we are dying.
 func (h *handler) runGRPCServer(ctx context.Context, server *grpc.Server) error {
 
-	l, err := net.Listen("tcp", "127.0.0.1:8090")
+	l, err := net.Listen("tcp", "127.0.0.1:8000")
 	if err != nil {
 		return err
 	}
-
-	// Skip use of tomb here so we don't pollute a clean shutdown with errors
 
 	go func() { server.Serve(l) }()
 
@@ -187,7 +193,7 @@ func (h *handler) FetchX509SVID(server node_pb.Node_FetchX509SVIDServer) error {
 	for {
 		request, err := server.Recv()
 		if err == io.EOF {
-			return nil
+			return err
 		}
 		if err != nil {
 			return err
@@ -199,49 +205,49 @@ func (h *handler) FetchX509SVID(server node_pb.Node_FetchX509SVIDServer) error {
 		keyPEM, err := ioutil.ReadFile(key_file_path)
 		if err != nil {
 			fmt.Println("error" + err.Error())
-			return nil
+			return err
 		}
 
 		block, rest := pem.Decode(keyPEM)
 
 		if block == nil {
 			fmt.Println("error : invalid key format")
-			return nil
+			return fmt.Errorf("error : invalid key format")
 		}
 
 		if len(rest) > 0 {
 			fmt.Println("error : invalid key format - too many keys")
-			return nil
+			return fmt.Errorf("error : invalid key format - too many keys")
 		}
 
 		key, err := x509.ParsePKCS8PrivateKey(block.Bytes)
 		if err != nil {
 			fmt.Println("error" + err.Error())
-			return nil
+			return err
 		}
 
 		certPEM, err := ioutil.ReadFile(cert_file_path)
 		if err != nil {
 			fmt.Println("error : unable to read cert file")
-			return nil
+			return fmt.Errorf("error : unable to read cert file")
 		}
 
 		block, rest = pem.Decode(certPEM)
 
 		if block == nil {
 			fmt.Println("error : invalid cert format")
-			return nil
+			return fmt.Errorf("error : invalid cert format")
 		}
 
 		if len(rest) > 0 {
 			fmt.Println("error : invalid cert format : too many certs")
-			return nil
+			return fmt.Errorf("error : invalid cert format : too many certs")
 		}
 
 		cert, err := x509.ParseCertificate(block.Bytes)
 		if err != nil {
 			fmt.Println("error" + err.Error())
-			return nil
+			return err
 		}
 
 		// configure upstream ca
@@ -256,7 +262,7 @@ func (h *handler) FetchX509SVID(server node_pb.Node_FetchX509SVIDServer) error {
 		cert, err = ca.SignCSR(ctx, csr)
 		if err != nil {
 			fmt.Println("error " + err.Error())
-			return nil
+			return err
 		}
 
 		svids := make(map[string]*node_pb.X509SVID, 1)
@@ -322,8 +328,10 @@ func TestSpirePlugin_GetPluginInfo(t *testing.T) {
 
 func TestSpirePlugin_SubmitValidCSR(t *testing.T) {
 	server := testHandler{}
-	server.startTestServers()
+
 	defer server.stopTestServers()
+	err := server.startTestServers()
+	require.NoError(t, err)
 
 	m, err := newWithDefault()
 
@@ -345,8 +353,10 @@ func TestSpirePlugin_SubmitValidCSR(t *testing.T) {
 
 func TestSpirePlugin_SubmitInvalidCSR(t *testing.T) {
 	server := testHandler{}
-	server.startTestServers()
+
 	defer server.stopTestServers()
+	err := server.startTestServers()
+	require.NoError(t, err)
 
 	m, err := newWithDefault()
 
@@ -369,9 +379,9 @@ func TestSpirePlugin_SubmitInvalidCSR(t *testing.T) {
 func newWithDefault() (upstreamca.Plugin, error) {
 	config := Configuration{
 		ServerAddr:      "127.0.0.1",
-		ServerPort:      "8090",
+		ServerPort:      "8000",
 		ServerAgentAddr: "./test.sock",
-		TTL:             "5s",
+		TTL:             "20s",
 	}
 
 	jsonConfig, err := json.Marshal(config)

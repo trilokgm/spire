@@ -154,6 +154,7 @@ manage the various registered nodes and workloads that are controlled by it.
 | ttl | [int32](#int32) |  | Time to live. |
 | federates_with | [string](#string) | repeated | A list of federated trust domain SPIFFE IDs. |
 | entry_id | [string](#string) |  | Entry ID |
+| delegated | [string](#string) |  | string delegated |
 
 
 
