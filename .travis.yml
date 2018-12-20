@@ -9,6 +9,11 @@ language: go
 cache:
     directories:
         - .cache
+before_script:
+    - mkdir -p $HOME/gopath/src/github.com/spiffe/spire
+    - rsync -az ${TRAVIS_BUILD_DIR}/ $HOME/gopath/src/github.com/spiffe/spire/
+    - export TRAVIS_BUILD_DIR=$HOME/gopath/src/github.com/spiffe/spire
+    - cd $HOME/gopath/src/github.com/spiffe/spire
 
 script:
     - ./build.sh setup
