@@ -32,7 +32,7 @@ const (
 	"ttl":"1h",
 	"server_address":"_test_data/keys/private_key.pem",
 	"server_port":"_test_data/keys/cert.pem",
-	"server_agent_address":"8000"
+	"server_agent_address":"10000"
 }`
 	trustDomain           = "example.com"
 	key_file_path         = "_test_data/keys/private_key.pem"
@@ -78,6 +78,7 @@ func (t *testHandler) stopTestServers() {
 }
 
 func (w *whandler) startWAPITestServer() error {
+	fmt.Println("startwapi test server")
 	w.server = grpc.NewServer(grpc.Creds(auth.NewCredentials()))
 
 	w_pb.RegisterSpiffeWorkloadAPIServer(w.server, w)
@@ -159,6 +160,7 @@ func (w *whandler) FetchJWTBundles(req *w_pb.JWTBundlesRequest, stream w_pb.Spif
 }
 
 func (h *handler) startNodeAPITestServer() error {
+	fmt.Println("start node api test server")
 	creds, err := credentials.NewServerTLSFromFile(server_cert_file_path, key_file_path)
 	if err != nil {
 		fmt.Println("error + ", err.Error())
@@ -180,7 +182,7 @@ func (h *handler) startNodeAPITestServer() error {
 // runGRPCServer will start the server and block until it exits or we are dying.
 func (h *handler) runGRPCServer(ctx context.Context, server *grpc.Server) error {
 
-	l, err := net.Listen("tcp", "127.0.0.1:8000")
+	l, err := net.Listen("tcp", "127.0.0.1:10000")
 	if err != nil {
 		return err
 	}
@@ -330,8 +332,12 @@ func TestSpirePlugin_GetPluginInfo(t *testing.T) {
 	require.NotNil(t, res)
 }
 
+var T *testing.T
+
 func TestSpirePlugin_SubmitValidCSR(t *testing.T) {
 	server := testHandler{}
+
+	T = t
 
 	defer server.stopTestServers()
 	err := server.startTestServers()
@@ -383,7 +389,7 @@ func TestSpirePlugin_SubmitValidCSR(t *testing.T) {
 func newWithDefault() (upstreamca.Plugin, error) {
 	config := Configuration{
 		ServerAddr:      "127.0.0.1",
-		ServerPort:      "8000",
+		ServerPort:      "10000",
 		ServerAgentAddr: "./test.sock",
 		TTL:             "20s",
 	}
