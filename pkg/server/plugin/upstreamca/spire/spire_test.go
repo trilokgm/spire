@@ -333,6 +333,8 @@ func TestSpirePlugin_SubmitValidCSR(t *testing.T) {
 	err := server.startTestServers()
 	require.NoError(t, err)
 
+	time.Sleep(10 * time.Second)
+	
 	m, err := newWithDefault()
 
 	const testDataDir = "_test_data/csr_valid"
