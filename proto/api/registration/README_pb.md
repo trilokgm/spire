@@ -44,6 +44,7 @@
     - [FieldOptions.CType](#google.protobuf.FieldOptions.CType)
     - [FieldOptions.JSType](#google.protobuf.FieldOptions.JSType)
     - [FileOptions.OptimizeMode](#google.protobuf.FileOptions.OptimizeMode)
+    - [MethodOptions.IdempotencyLevel](#google.protobuf.MethodOptions.IdempotencyLevel)
   
   
   
@@ -609,6 +610,8 @@ files it parses.
 | cc_enable_arenas | [bool](#bool) | optional | Enables the use of arenas for the proto messages in this file. This applies only to generated classes for C&#43;&#43;. |
 | objc_class_prefix | [string](#string) | optional | Sets the objective c class prefix which is prepended to all objective c generated classes from this .proto. There is no default. |
 | csharp_namespace | [string](#string) | optional | Namespace for generated classes; defaults to the package. |
+| swift_prefix | [string](#string) | optional | By default Swift generators will take the proto package and CamelCase it replacing &#39;.&#39; with underscore and use that to prefix the types/symbols defined. When this options is provided, they will use this value instead to prefix the types/symbols defined. |
+| php_class_prefix | [string](#string) | optional | Sets the php class prefix which is prepended to all php generated classes from this .proto. Default is empty. |
 | uninterpreted_option | [UninterpretedOption](#google.protobuf.UninterpretedOption) | repeated | The parser stores options it doesn&#39;t recognize here. See above. |
 
 
@@ -699,6 +702,7 @@ Describes a method of a service.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | deprecated | [bool](#bool) | optional | Is this method deprecated? Depending on the target platform, this can emit Deprecated annotations for the method, or it will be completely ignored; in the very least, this is a formalization for deprecating methods. |
+| idempotency_level | [MethodOptions.IdempotencyLevel](#google.protobuf.MethodOptions.IdempotencyLevel) | optional |  |
 | uninterpreted_option | [UninterpretedOption](#google.protobuf.UninterpretedOption) | repeated | The parser stores options it doesn&#39;t recognize here. See above. |
 
 
@@ -862,7 +866,7 @@ E.g.,{ [&#34;foo&#34;, false], [&#34;bar.baz&#34;, true], [&#34;qux&#34;, false]
 | ---- | ------ | ----------- |
 | LABEL_OPTIONAL | 1 | 0 is reserved for errors |
 | LABEL_REQUIRED | 2 |  |
-| LABEL_REPEATED | 3 | TODO(sanjay): Should we add LABEL_MAP? |
+| LABEL_REPEATED | 3 |  |
 
 
 
@@ -882,7 +886,7 @@ E.g.,{ [&#34;foo&#34;, false], [&#34;bar.baz&#34;, true], [&#34;qux&#34;, false]
 | TYPE_FIXED32 | 7 |  |
 | TYPE_BOOL | 8 |  |
 | TYPE_STRING | 9 |  |
-| TYPE_GROUP | 10 | Tag-delimited aggregate. |
+| TYPE_GROUP | 10 | Tag-delimited aggregate. Group type is deprecated and not supported in proto3. However, Proto3 implementations should still be able to parse the group wire format and treat group fields as unknown fields. |
 | TYPE_MESSAGE | 11 | Length-delimited aggregate. |
 | TYPE_BYTES | 12 | New in version 2. |
 | TYPE_UINT32 | 13 |  |
@@ -930,6 +934,21 @@ Generated classes can be optimized for speed or code size.
 | SPEED | 1 | Generate complete code for parsing, serialization, |
 | CODE_SIZE | 2 | etc. Use ReflectionOps to implement these methods. |
 | LITE_RUNTIME | 3 | Generate code using MessageLite and the lite runtime. |
+
+
+
+<a name="google.protobuf.MethodOptions.IdempotencyLevel"/>
+
+### MethodOptions.IdempotencyLevel
+Is this method side-effect-free (or safe in HTTP parlance), or idempotent,
+or neither? HTTP based RPC implementation may choose GET verb for safe
+methods, and PUT verb for idempotent methods instead of the default POST.
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| IDEMPOTENCY_UNKNOWN | 0 |  |
+| NO_SIDE_EFFECTS | 1 | implies idempotent |
+| IDEMPOTENT | 2 | idempotent, but may have side effects |
 
 
  
