@@ -74,7 +74,6 @@ func (t *testHandler) startTestServers() error {
 
 func (t *testHandler) stopTestServers() {
 	t.napiServer.server.Stop()
-	t.wapiServer.server.Stop()
 }
 
 func (w *whandler) startWAPITestServer() error {
@@ -92,8 +91,6 @@ func (w *whandler) startWAPITestServer() error {
 	}
 
 	go func() { w.server.Serve(l) }()
-
-	time.Sleep(5 * time.Second)
 
 	return nil
 }
@@ -188,8 +185,6 @@ func (h *handler) runGRPCServer(ctx context.Context, server *grpc.Server) error 
 	}
 
 	go func() { server.Serve(l) }()
-
-	time.Sleep(5 * time.Second)
 
 	return nil
 }
