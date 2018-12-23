@@ -66,7 +66,6 @@ func (t *testHandler) startTestServers() {
 
 func (t *testHandler) stopTestServers() {
 	t.napiServer.server.Stop()
-	t.wapiServer.server.Stop()
 }
 
 func (w *whandler) startWAPITestServer() error {

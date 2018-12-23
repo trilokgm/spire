@@ -29,7 +29,7 @@ func (m *Empty) Reset()         { *m = Empty{} }
 func (m *Empty) String() string { return proto.CompactTextString(m) }
 func (*Empty) ProtoMessage()    {}
 func (*Empty) Descriptor() ([]byte, []int) {
-	return fileDescriptor_common_6f9e45ba83d62a82, []int{0}
+	return fileDescriptor_common_803095c508659240, []int{0}
 }
 func (m *Empty) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Empty.Unmarshal(m, b)
@@ -64,7 +64,7 @@ func (m *AttestationData) Reset()         { *m = AttestationData{} }
 func (m *AttestationData) String() string { return proto.CompactTextString(m) }
 func (*AttestationData) ProtoMessage()    {}
 func (*AttestationData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_common_6f9e45ba83d62a82, []int{1}
+	return fileDescriptor_common_803095c508659240, []int{1}
 }
 func (m *AttestationData) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_AttestationData.Unmarshal(m, b)
@@ -115,7 +115,7 @@ func (m *Selector) Reset()         { *m = Selector{} }
 func (m *Selector) String() string { return proto.CompactTextString(m) }
 func (*Selector) ProtoMessage()    {}
 func (*Selector) Descriptor() ([]byte, []int) {
-	return fileDescriptor_common_6f9e45ba83d62a82, []int{2}
+	return fileDescriptor_common_803095c508659240, []int{2}
 }
 func (m *Selector) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Selector.Unmarshal(m, b)
@@ -162,7 +162,7 @@ func (m *Selectors) Reset()         { *m = Selectors{} }
 func (m *Selectors) String() string { return proto.CompactTextString(m) }
 func (*Selectors) ProtoMessage()    {}
 func (*Selectors) Descriptor() ([]byte, []int) {
-	return fileDescriptor_common_6f9e45ba83d62a82, []int{3}
+	return fileDescriptor_common_803095c508659240, []int{3}
 }
 func (m *Selectors) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Selectors.Unmarshal(m, b)
@@ -218,7 +218,7 @@ func (m *RegistrationEntry) Reset()         { *m = RegistrationEntry{} }
 func (m *RegistrationEntry) String() string { return proto.CompactTextString(m) }
 func (*RegistrationEntry) ProtoMessage()    {}
 func (*RegistrationEntry) Descriptor() ([]byte, []int) {
-	return fileDescriptor_common_6f9e45ba83d62a82, []int{4}
+	return fileDescriptor_common_803095c508659240, []int{4}
 }
 func (m *RegistrationEntry) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_RegistrationEntry.Unmarshal(m, b)
@@ -300,7 +300,7 @@ func (m *RegistrationEntries) Reset()         { *m = RegistrationEntries{} }
 func (m *RegistrationEntries) String() string { return proto.CompactTextString(m) }
 func (*RegistrationEntries) ProtoMessage()    {}
 func (*RegistrationEntries) Descriptor() ([]byte, []int) {
-	return fileDescriptor_common_6f9e45ba83d62a82, []int{5}
+	return fileDescriptor_common_803095c508659240, []int{5}
 }
 func (m *RegistrationEntries) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_RegistrationEntries.Unmarshal(m, b)
@@ -339,7 +339,7 @@ func (m *Certificate) Reset()         { *m = Certificate{} }
 func (m *Certificate) String() string { return proto.CompactTextString(m) }
 func (*Certificate) ProtoMessage()    {}
 func (*Certificate) Descriptor() ([]byte, []int) {
-	return fileDescriptor_common_6f9e45ba83d62a82, []int{6}
+	return fileDescriptor_common_803095c508659240, []int{6}
 }
 func (m *Certificate) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Certificate.Unmarshal(m, b)
@@ -383,7 +383,7 @@ func (m *PublicKey) Reset()         { *m = PublicKey{} }
 func (m *PublicKey) String() string { return proto.CompactTextString(m) }
 func (*PublicKey) ProtoMessage()    {}
 func (*PublicKey) Descriptor() ([]byte, []int) {
-	return fileDescriptor_common_6f9e45ba83d62a82, []int{7}
+	return fileDescriptor_common_803095c508659240, []int{7}
 }
 func (m *PublicKey) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_PublicKey.Unmarshal(m, b)
@@ -440,7 +440,7 @@ func (m *Bundle) Reset()         { *m = Bundle{} }
 func (m *Bundle) String() string { return proto.CompactTextString(m) }
 func (*Bundle) ProtoMessage()    {}
 func (*Bundle) Descriptor() ([]byte, []int) {
-	return fileDescriptor_common_6f9e45ba83d62a82, []int{8}
+	return fileDescriptor_common_803095c508659240, []int{8}
 }
 func (m *Bundle) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Bundle.Unmarshal(m, b)
@@ -493,9 +493,9 @@ func init() {
 	proto.RegisterType((*Bundle)(nil), "spire.common.Bundle")
 }
 
-func init() { proto.RegisterFile("common.proto", fileDescriptor_common_6f9e45ba83d62a82) }
+func init() { proto.RegisterFile("common.proto", fileDescriptor_common_803095c508659240) }
 
-var fileDescriptor_common_6f9e45ba83d62a82 = []byte{
+var fileDescriptor_common_803095c508659240 = []byte{
 	// 496 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x53, 0x4d, 0x6f, 0xd3, 0x40,
 	0x10, 0x95, 0xeb, 0x26, 0xb1, 0xa7, 0x9f, 0x2c, 0x08, 0x5c, 0x01, 0x22, 0xb2, 0x04, 0x8a, 0x38,
