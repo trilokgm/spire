@@ -51,7 +51,7 @@ type RegisteredEntry struct {
 	EntryID       string `gorm:"unique_index"`
 	SpiffeID      string
 	ParentID      string
-	Delegated     string
+	Downstream    bool
 	TTL           int32
 	Selectors     []Selector
 	FederatesWith []Bundle `gorm:"many2many:federated_registration_entries;"`

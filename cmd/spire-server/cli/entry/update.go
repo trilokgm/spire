@@ -30,10 +30,10 @@ type UpdateConfig struct {
 	// ex. "unix:uid:1000" or "spiffe_id:spiffe://example.org/foo"
 	Selectors StringsFlag
 
-	ParentID  string
-	SpiffeID  string
-	Delegated string
-	Ttl       int
+	ParentID   string
+	SpiffeID   string
+	Downstream bool
+	Ttl        int
 
 	// List of SPIFFE IDs of trust domains the registration entry is federated with
 	FederatesWith StringsFlag
@@ -144,11 +144,11 @@ func (c UpdateCLI) Run(args []string) int {
 // parseConfig builds a registration entry from the given config
 func (c UpdateCLI) parseConfig(config *UpdateConfig) ([]*common.RegistrationEntry, error) {
 	e := &common.RegistrationEntry{
-		EntryId:   config.EntryID,
-		ParentId:  config.ParentID,
-		SpiffeId:  config.SpiffeID,
-		Ttl:       int32(config.Ttl),
-		Delegated: config.Delegated,
+		EntryId:    config.EntryID,
+		ParentId:   config.ParentID,
+		SpiffeId:   config.SpiffeID,
+		Ttl:        int32(config.Ttl),
+		Downstream: config.Downstream,
 	}
 
 	selectors := []*common.Selector{}
@@ -211,6 +211,8 @@ func (UpdateCLI) newConfig(args []string) (*UpdateConfig, error) {
 
 	f.Var(&c.Selectors, "selector", "A colon-delimeted type:value selector. Can be used more than once")
 	f.Var(&c.FederatesWith, "federatesWith", "SPIFFE ID of a trust domain to federate with. Can be used more than once")
+
+	f.BoolVar(&c.Downstream, "downstream", false, "A boolean value to enable signing CA CSR for heirarchical spire server")
 
 	return c, f.Parse(args)
 }

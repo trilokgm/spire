@@ -3,6 +3,7 @@ package ca
 import (
 	"context"
 	"crypto/x509"
+	"crypto/x509/pkix"
 	"errors"
 	"fmt"
 	"math/big"
@@ -31,6 +32,7 @@ type serverCAConfig struct {
 	Catalog     catalog.Catalog
 	TrustDomain url.URL
 	DefaultTTL  time.Duration
+	CASubject   pkix.Name
 }
 
 type ServerCA interface {
@@ -138,6 +140,10 @@ func (ca *serverCA) SignX509CASVID(ctx context.Context, csrDER []byte, ttl time.
 	if err != nil {
 		return nil, err
 	}
+
+	// Avoid allowing dowstream server for using different subject
+	// replace template subject to use configured ca subject
+	template.Subject = ca.c.CASubject
 
 	km := ca.c.Catalog.KeyManagers()[0]
 	cert, err := x509util.CreateCertificate(ctx, km, template, kp.x509CA.cert, kp.X509CAKeyID(), template.PublicKey)

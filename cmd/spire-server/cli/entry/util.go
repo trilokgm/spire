@@ -60,7 +60,7 @@ func printEntry(e *common.RegistrationEntry) {
 	fmt.Printf("Entry ID:\t%s\n", e.EntryId)
 	fmt.Printf("SPIFFE ID:\t%s\n", e.SpiffeId)
 	fmt.Printf("Parent ID:\t%s\n", e.ParentId)
-	fmt.Printf("Delegated:\t%s\n", e.Delegated)
+	fmt.Printf("Downstream:\t%t\n", e.Downstream)
 
 	if e.Ttl == 0 {
 		fmt.Printf("TTL:\t\t%v\n", "default")

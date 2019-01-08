@@ -367,10 +367,9 @@ func TestSpirePlugin_SubmitInvalidCSR(t *testing.T) {
 
 func newWithDefault() (upstreamca.Plugin, error) {
 	config := Configuration{
-		ServerAddr:      "127.0.0.1",
-		ServerPort:      "8090",
-		ServerAgentAddr: "./test.sock",
-		TTL:             "5s",
+		ServerAddr:        "127.0.0.1",
+		ServerPort:        "8090",
+		WorkloadAPISocket: "./test.sock",
 	}
 
 	jsonConfig, err := json.Marshal(config)

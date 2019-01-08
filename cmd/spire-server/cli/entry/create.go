@@ -31,7 +31,7 @@ type CreateConfig struct {
 	SpiffeID string
 	Ttl      int
 
-	Delegated string
+	Downstream bool
 
 	// List of SPIFFE IDs of trust domains the registration entry is federated with
 	FederatesWith StringsFlag
@@ -138,10 +138,10 @@ func (c CreateCLI) Run(args []string) int {
 // parseConfig builds a registration entry from the given config
 func (c CreateCLI) parseConfig(config *CreateConfig) ([]*common.RegistrationEntry, error) {
 	e := &common.RegistrationEntry{
-		ParentId:  config.ParentID,
-		SpiffeId:  config.SpiffeID,
-		Ttl:       int32(config.Ttl),
-		Delegated: config.Delegated,
+		ParentId:   config.ParentID,
+		SpiffeId:   config.SpiffeID,
+		Ttl:        int32(config.Ttl),
+		Downstream: config.Downstream,
 	}
 
 	selectors := []*common.Selector{}
@@ -202,7 +202,7 @@ func (CreateCLI) newConfig(args []string) (*CreateConfig, error) {
 
 	f.Var(&c.Selectors, "selector", "A colon-delimeted type:value selector. Can be used more than once")
 	f.Var(&c.FederatesWith, "federatesWith", "SPIFFE ID of a trust domain to federate with. Can be used more than once")
-	f.StringVar(&c.Delegated, "delegated", "", "URI of the trust domain to which certificates can be generated")
+	f.BoolVar(&c.Downstream, "downstream", false, "A boolean value to enable signing CA CSR for heirarchical spire server")
 
 	return c, f.Parse(args)
 }
