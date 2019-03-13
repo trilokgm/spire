@@ -27,6 +27,7 @@ import (
 	keymanager_disk "github.com/spiffe/spire/pkg/server/plugin/keymanager/disk"
 	keymanager_memory "github.com/spiffe/spire/pkg/server/plugin/keymanager/memory"
 	upstreamca_disk "github.com/spiffe/spire/pkg/server/plugin/upstreamca/disk"
+	upstreamca_spire "github.com/spiffe/spire/pkg/server/plugin/upstreamca/spire"
 )
 
 const (
@@ -73,6 +74,7 @@ var (
 		},
 		UpstreamCAType: {
 			"disk": upstreamca.NewBuiltIn(upstreamca_disk.New()),
+			"spire": upstreamca.NewBuiltIn(upstreamca_spire.New()),
 		},
 		KeyManagerType: {
 			"disk":   keymanager.NewBuiltIn(keymanager_disk.New()),
